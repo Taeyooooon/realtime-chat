@@ -1,35 +1,50 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
+import { socket } from '..';
 
-export default function Chat() {
+const Chat = () => {
   const [msg, setMsg] = useState('');
-  const [socket, setSocket] = useState<any>();
+  const [receiveMsg, setReceiveMsg] = useState<string[]>([]);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit('chat message', msg);
+    socket.emit('chat message', msg); // event 이름 백엔드랑 동일하게
     setMsg('');
   };
+
+  useEffect(() => {
+    const onConnect = () => {
+      console.log('연결');
+    };
+
+    const onDisconnect = () => {
+      console.log('연결끊김');
+    };
+
+    const onMessage = (msg: string) => {
+      console.log(msg);
+      setReceiveMsg((prev) => [...prev, msg]);
+    };
+
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+    socket.on('receive message', onMessage);
+
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+      socket.off('receive message', onMessage);
+    };
+  }, []);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMsg(e.target.value);
   };
 
-  useEffect(() => {
-    const newSocket = io('ws://10.58.52.81:3000');
-    setSocket(newSocket);
-
-    socket.on('chat message', (msg: any) => {
-      console.log(msg);
-    });
-
-    return () => {
-      newSocket.close();
-    };
-  }, []);
-
   return (
     <>
+      {receiveMsg.map((msg, i) => {
+        return <div key={i}>{msg}</div>;
+      })}
       <form onSubmit={onSubmit} className=' absolute bottom-0 flex w-full'>
         <input
           type='text'
@@ -42,4 +57,6 @@ export default function Chat() {
       </form>
     </>
   );
-}
+};
+
+export default Chat;

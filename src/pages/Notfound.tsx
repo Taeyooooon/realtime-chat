@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-export default function Notfound() {
+const Notfound =() => {
   const navigate = useNavigate();
   return (
     <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center'>
@@ -11,3 +11,5 @@ export default function Notfound() {
     </div>
   );
 }
+
+export default Notfound;
