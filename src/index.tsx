@@ -5,7 +5,7 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './Router';
 import { io } from 'socket.io-client';
 
-export const socket = io('ws://10.58.52.148:3000');
+export const socket = io('ws://10.58.52.127:3000');
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

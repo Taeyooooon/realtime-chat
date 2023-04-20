@@ -11,7 +11,7 @@ export const router = createBrowserRouter([
     errorElement: <Notfound />,
     children: [
       { index: true, path: '/', element: <Join /> },
-      { path: '/chat', element: <Chat /> },
+      { path: '/chat/:room', element: <Chat /> },
     ],
   },
 ]);

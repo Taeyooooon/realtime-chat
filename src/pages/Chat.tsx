@@ -1,14 +1,24 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { socket } from '..';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Chat = () => {
   const [msg, setMsg] = useState('');
   const [receiveMsg, setReceiveMsg] = useState<string[]>([]);
+  const navigate = useNavigate();
+  const { room } = useParams();
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmitMsg = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit('chat message', msg); // event 이름 백엔드랑 동일하게
+    if (!msg) return alert('메세지를 입력해주세요.');
+    socket.emit('chat_message', room, msg, (res: string) => {
+      console.log(`${res} 메세지 전송에 성공`);
+    });
     setMsg('');
+  };
+
+  const onChangeMsg = (e: ChangeEvent<HTMLInputElement>) => {
+    setMsg(e.target.value);
   };
 
   useEffect(() => {
@@ -18,39 +28,42 @@ const Chat = () => {
 
     const onDisconnect = () => {
       console.log('연결끊김');
+      navigate('/');
     };
 
     const onMessage = (msg: string) => {
-      console.log(msg);
       setReceiveMsg((prev) => [...prev, msg]);
     };
 
+    const onEnterRoom = (msg: string) => {
+      if (msg === 'success') console.log('방 입장 성공');
+    };
+    // TODO: 챗방에서 새로고침하면 방입장이 안됨
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
-    socket.on('receive message', onMessage);
+    socket.on('enter_room', onEnterRoom);
+    socket.on('receive_message', onMessage);
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
-      socket.off('receive message', onMessage);
+      socket.off('enter_room', onEnterRoom);
+      socket.off('receive_message', onMessage);
     };
   }, []);
-
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setMsg(e.target.value);
-  };
 
   return (
     <>
       {receiveMsg.map((msg, i) => {
         return <div key={i}>{msg}</div>;
       })}
-      <form onSubmit={onSubmit} className=' absolute bottom-0 flex w-full'>
+
+      <form onSubmit={onSubmitMsg} className=' absolute bottom-0 flex w-full'>
         <input
           type='text'
           placeholder='채팅입력'
           value={msg}
-          onChange={onChange}
+          onChange={onChangeMsg}
           className=' w-full h-10 border-2 border-gray-300 rounded-lg text-center'
         />
         <button className=' shrink-0 w-10'>전송</button>
