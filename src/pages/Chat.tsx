@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { socket } from '..';
 import { useNavigate, useParams } from 'react-router-dom';
+import { socket } from '../Router';
 
 const Chat = () => {
   const [msg, setMsg] = useState('');
@@ -38,6 +38,7 @@ const Chat = () => {
     const onEnterRoom = (msg: string) => {
       if (msg === 'success') console.log('방 입장 성공');
     };
+
     // TODO: 챗방에서 새로고침하면 방입장이 안됨
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);

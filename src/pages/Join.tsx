@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { socket } from '..';
+import { socket } from '../Router';
+import CreateRoomBtn from '../components/CreateRoomBtn';
 
 interface RoomList {
   _id: string;
@@ -11,7 +12,13 @@ interface RoomList {
 export default function Join() {
   const [roomValue, setRoomValue] = useState('');
   const [roomList, setRoomList] = useState<RoomList[]>([]);
+  const [isCreateRoomView, setIsCreateRoomView] = useState(false);
   const navigate = useNavigate();
+
+  const ToggleCreateRoomView = () => {
+    setIsCreateRoomView((prev) => !prev);
+    setRoomValue('');
+  };
 
   const onChangeRoom = (e: ChangeEvent<HTMLInputElement>) => {
     setRoomValue(e.target.value);
@@ -20,8 +27,7 @@ export default function Join() {
   const onCreateRoom = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!roomValue) return alert('방번호를 입력해주세요.');
-    socket.emit('create_room', roomValue, (response: any) => {
-      console.log('res : ', response);
+    socket.emit('create_room', roomValue, (response: string) => {
       if (response === 'success') {
         return navigate(`/chat/${roomValue}`);
       }
@@ -30,8 +36,7 @@ export default function Join() {
   };
 
   const onRoomEnter = (room_id: string) => {
-    socket.emit('enter_room', room_id, (response: any) => {
-      console.log('res123 : ', response);
+    socket.emit('enter_room', room_id, (response: string) => {
       if (response === 'success') {
         return navigate(`/chat/${room_id}`);
       }
@@ -41,7 +46,6 @@ export default function Join() {
 
   useEffect(() => {
     const getRoomList = (rooms: RoomList[]) => {
-      console.log('rooms : ', rooms);
       setRoomList(rooms);
     };
 
@@ -54,24 +58,51 @@ export default function Join() {
 
   return (
     <>
-      <form onSubmit={onCreateRoom}>
-        <input
-          type='text'
-          placeholder='방번호 입력'
-          value={roomValue}
-          onChange={onChangeRoom}
-        />
-        <button>생성</button>
-      </form>
-      <div>방리스트 나올 자리</div>
-      {roomList.map(({ _id, room_id, user_id }: RoomList) => {
-        return (
-          <div key={room_id}>
-            <span>{room_id}</span>
-            <span onClick={() => onRoomEnter(room_id)}>입장하기</span>
-          </div>
-        );
-      })}
+      <CreateRoomBtn
+        ToggleCreateRoomView={ToggleCreateRoomView}
+        isCreateRoomView={isCreateRoomView}
+      />
+
+      {isCreateRoomView && (
+        <section>
+          <form
+            onSubmit={onCreateRoom}
+            className='flex flex-col justify-center mb-5'
+          >
+            <input
+              type='number'
+              placeholder='채팅방 번호 입력'
+              value={roomValue}
+              onChange={onChangeRoom}
+              maxLength={4}
+              className=' mb-4 p-4 rounded-lg text-center focus:outline-green-200'
+            />
+            <button className=' bg-green-200 p-4 font-semibold rounded-lg'>
+              채팅방 생성하고 입장하기
+            </button>
+          </form>
+        </section>
+      )}
+
+      <section className='flex flex-col justify-center items-center'>
+        <div className='text-2xl font-bold'>채팅방 리스트</div>
+        {roomList.length === 0 ? (
+          <>
+            <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center font-bold'>
+              생성된 방이 없습니다.
+            </div>
+          </>
+        ) : (
+          roomList.map(({ _id, room_id, user_id }: RoomList) => {
+            return (
+              <div key={room_id}>
+                <span>{room_id}</span>
+                <span onClick={() => onRoomEnter(room_id)}>입장하기</span>
+              </div>
+            );
+          })
+        )}
+      </section>
     </>
   );
 }
