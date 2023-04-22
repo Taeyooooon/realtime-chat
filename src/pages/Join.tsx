@@ -75,9 +75,9 @@ export default function Join() {
               value={roomValue}
               onChange={onChangeRoom}
               maxLength={4}
-              className=' mb-4 p-4 rounded-lg text-center focus:outline-green-200'
+              className=' mb-4 p-4 rounded-lg text-center border border-green-100 focus:outline-green-200'
             />
-            <button className=' bg-green-200 p-4 font-semibold rounded-lg'>
+            <button className=' bg-green-200 p-4 font-semibold rounded-lg hover:bg-green-300'>
               채팅방 생성하고 입장하기
             </button>
           </form>

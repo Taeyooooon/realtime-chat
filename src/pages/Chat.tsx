@@ -65,9 +65,14 @@ const Chat = () => {
           placeholder='채팅입력'
           value={msg}
           onChange={onChangeMsg}
-          className=' w-full h-10 border-2 border-gray-300 rounded-lg text-center'
+          className=' w-full h-14 border-2 border-green-200 text-center focus:outline-green-300'
         />
-        <button className=' shrink-0 w-10'>전송</button>
+        <button
+          className=' shrink-0 w-14 bg-green-300 disabled:bg-green-200'
+          disabled={msg === ''}
+        >
+          전송
+        </button>
       </form>
     </>
   );
