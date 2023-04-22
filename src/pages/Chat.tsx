@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { socket } from '../Router';
+import ChatMsg from '../components/ChatMsg';
 
 const Chat = () => {
   const [msg, setMsg] = useState('');
@@ -55,27 +56,53 @@ const Chat = () => {
 
   return (
     <>
-      {receiveMsg.map((msg, i) => {
-        return <div key={i}>{msg}</div>;
-      })}
+      <section className='flex flex-col h-[calc(100%-36px)] pb-[52px] overflow-y-scroll'>
+        {/* {receiveMsg.map((msg, i) => {  FIXME: 소켓 연결 시 수정  */}
+        {ChatMockData.map(({ message, status }, i) => {
+          return <ChatMsg key={i} message={message} status={status} />;
+        })}
 
-      <form onSubmit={onSubmitMsg} className=' absolute bottom-0 flex w-full'>
-        <input
-          type='text'
-          placeholder='채팅입력'
-          value={msg}
-          onChange={onChangeMsg}
-          className=' w-full h-14 border-2 border-green-200 text-center focus:outline-green-300'
-        />
-        <button
-          className=' shrink-0 w-14 bg-green-300 disabled:bg-green-200'
-          disabled={msg === ''}
-        >
-          전송
-        </button>
-      </form>
+        <form onSubmit={onSubmitMsg} className=' absolute bottom-0 flex w-full'>
+          <input
+            type='text'
+            placeholder='채팅입력'
+            value={msg}
+            onChange={onChangeMsg}
+            className=' w-full h-14 border-2 border-green-200 text-center focus:outline-green-300'
+          />
+          <button
+            className=' shrink-0 w-14 bg-green-300 disabled:bg-green-200'
+            disabled={msg === ''}
+          >
+            전송
+          </button>
+        </form>
+      </section>
     </>
   );
 };
 
 export default Chat;
+
+const ChatMockData = [
+  { message: '안녕', status: 'send' },
+  { message: '안녕1', status: 'receive' },
+  { message: '안녕2', status: 'send' },
+  { message: '안녕2', status: 'send' },
+  { message: '안녕2', status: 'receive' },
+  { message: '안녕2', status: 'send' },
+  { message: '안녕2', status: 'send' },
+  { message: '안녕2', status: 'receive' },
+  { message: '안녕2', status: 'send' },
+  { message: '안녕2', status: 'send' },
+  { message: '안녕2', status: 'send' },
+  { message: '안녕2', status: 'send' },
+  { message: '안녕2', status: 'receive' },
+  { message: '안녕2', status: 'send' },
+  { message: '안녕2', status: 'send' },
+  { message: '안녕2', status: 'receive' },
+  { message: '안녕2', status: 'send' },
+  { message: '안녕2', status: 'send' },
+  { message: '안녕2', status: 'send' },
+  { message: '안녕2', status: 'send' },
+];
