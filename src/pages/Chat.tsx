@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { socket } from '../Router';
-import ChatMsg from '../components/ChatMsg';
+import ChatMsg from '../components/chat/ChatMsg';
 
 const Chat = () => {
   const [msg, setMsg] = useState('');

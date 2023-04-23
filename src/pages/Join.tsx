@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { socket } from '../Router';
-import CreateRoomBtn from '../components/CreateRoomBtn';
+import CreateRoomBtn from '../components/join/CreateRoomBtn';
 
 interface RoomList {
   _id: string;
@@ -74,7 +74,8 @@ export default function Join() {
               placeholder='채팅방 번호 입력'
               value={roomValue}
               onChange={onChangeRoom}
-              maxLength={4}
+              min={0}
+              max={9999}
               className=' mb-4 p-4 rounded-lg text-center border border-green-100 focus:outline-green-200'
             />
             <button className=' bg-green-200 p-4 font-semibold rounded-lg hover:bg-green-300'>
